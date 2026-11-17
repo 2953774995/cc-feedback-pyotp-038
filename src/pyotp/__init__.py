@@ -7,7 +7,7 @@ from re import split
 from typing import Any
 from urllib.parse import parse_qsl, unquote, urlparse
 
-from . import contrib
+from . import audit, contrib
 from .compat import random
 from .exceptions import OTPVerificationError, PyOTPError
 from .hotp import HOTP

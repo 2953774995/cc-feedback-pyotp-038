@@ -47,6 +47,14 @@ source = "vcs"
 [tool.hatch.build.targets.wheel]
 packages = ["src/pyotp"]
 
+[tool.pytest.ini_options]
+# The upstream test suite lives in test.py (run by `make test` via unittest).
+# Include it in pytest discovery so `pytest -q` actually exercises it.
+python_files = ["test.py", "test_*.py", "*_test.py"]
+# Classic output avoids the terminal reporter measuring progress-line widths
+# while tests have unicodedata.normalize patched (it is a shared stdlib module).
+console_output_style = "classic"
+
 [tool.mypy]
 strict = true
 

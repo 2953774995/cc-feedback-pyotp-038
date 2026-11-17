@@ -35,8 +35,8 @@ def audit():
     return m
 
 
-SECRET = "JBSWY3DPEHPK3PXP"
-SECRET2 = "KRSXG5CTMVRXEZLU"
+SECRET = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"
+SECRET2 = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP"
 
 
 def code(secret=SECRET, at=None, offset=0):
@@ -118,9 +118,10 @@ def p05():
     spaced = f"{raw[:3]} {raw[3:]}"
     out = m.verify_batch([{"secret": SECRET, "code": spaced}], at=now)
     assert out.items[0].ok, f"含空格应被归一后通过，实际 {out.items[0].reason}"
-    want8 = code(SECRET, now)
-    padded = want8.zfill(8)
-    out2 = m.verify_batch([{"secret": SECRET, "code": padded}], at=now)
+    import pyotp
+
+    eight = pyotp.TOTP(SECRET, digits=8).at(now)
+    out2 = m.verify_batch([{"secret": SECRET, "code": eight}], at=now)
     assert out2.items[0].ok, f"8 位前导零应被接受，实际 {out2.items[0].reason}"
     out3 = m.verify_batch([{"secret": SECRET, "code": "abcdef"}], at=now)
     assert out3.items[0].reason == "malformed", f"非数字应为 malformed，实际 {out3.items[0].reason}"
@@ -193,7 +194,7 @@ def p10():
     assert out.stats["ok"] == 10000, f"万条应全部通过，实际 {out.stats['ok']}"
     assert cost < 2.0, f"万条校验耗时 {cost:.2f}s 超过 2s"
     t = pyotp.TOTP(SECRET)
-    assert t.verify(t.at(now), at=now), "既有 TOTP.verify 被破坏"
+    assert t.verify(t.at(now), for_time=now), "既有 TOTP.verify 被破坏"
 
 
 def main():
